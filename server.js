@@ -13,7 +13,7 @@ app.get("/products", (request, response) => {
 // app.get("/products", (request, response) => {
 //   console.log("GET products huselt orj irlee 1");
 //   response.status(200).send("products");
-// dd
+// d
 // });
 
 //api - access point interface - newtreh tseg

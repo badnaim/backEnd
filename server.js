@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+const { response } = require("express");
 
 const app = express();
 const port = 2020;
@@ -65,11 +66,24 @@ app.get("/users", (request, response) => {
   response.status(200).send("products one");
 });
 
-app.delete("/product/:id", (req, res) => {
-  const id = req.params.id;
-  console.log("Delete huselt orj irle id: ", id);
-  products = products.filter((product) => product.id !== id);
-  console.log("products: ", products);
+app.delete("/products/delete/:id", (req, response) => {
+  const { id } = req.params;
+  console.log(id);
+  fs.readFile("./data/products.json", (err, data) => {
+    if (err) {
+      response.status(500).send({ message: err });
+    } else {
+      const datas = JSON.parse(data);
+      const leftDatas = datas.filter((data) => data.id !== id);
+      fs.writeFile("./data/products.json", JSON.stringify(leftDatas), (err) => {
+        if (err) {
+          response.status(500).send({ message: err });
+        } else {
+          response.status(200).send({ message: "succesfully deleted" });
+        }
+      });
+    }
+  });
 });
 
 app.listen(port, () => {

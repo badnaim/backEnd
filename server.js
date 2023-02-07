@@ -2,7 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const fs = require("fs");
-const { response } = require("express");
+const { readFile } = require("fs/promises");
+// const { response } = require("express");
 
 const app = express();
 const port = 2020;
@@ -21,8 +22,9 @@ app.get("/products", (request, response) => {
   // response.status(200).send(products);
 }); //router of backend
 
-app.get("/product/:id", (request, response) => {
+app.get("/product/:id", async (request, response) => {
   const prodId = request.params.id;
+  const products = await readFile("./data/products.json");
   const foundProduct = products.find((product) => product.id === prodId);
   if (foundProduct) {
     response.json(foundProduct);
@@ -50,16 +52,6 @@ app.post("/product/add", (request, response) => {
   });
 });
 
-// app.post("/add", (request, response) => {
-//   console.log("post huselt orj irlee request: ", request.body);
-//   const newProduct = {
-//     id: (products.length + 1).toString(),
-//     ...request.body,
-//   };
-//   products.push(newProduct);
-//   console.log("products: ", products);
-// });
-
 app.get("/users", (request, response) => {
   console.log("get product huslet orj irlee");
   response.send("one");
@@ -80,6 +72,30 @@ app.delete("/products/delete/:id", (req, response) => {
           response.status(500).send({ message: err });
         } else {
           response.status(200).send({ message: "succesfully deleted" });
+        }
+      });
+    }
+  });
+});
+
+app.put("/products/edit/:id", (req, res) => {
+  const { id } = req.params;
+  const update = req.body;
+  fs.readFile("./data/products.json", (err, data) => {
+    if (err) {
+      res.status(500).send({ message: err });
+    } else {
+      const products = JSON.parse(data);
+      const index = products.findIndex((data) => data.id === id);
+      products[index] = {
+        ...products[index],
+        ...update,
+      };
+      fs.writeFile("./data/products.json", JSON.stringify(products), (err) => {
+        if (err) {
+          res.status(500).send({ message: err });
+        } else {
+          res.status(200).send({ message: "succesfully edited" });
         }
       });
     }

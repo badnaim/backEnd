@@ -22,6 +22,17 @@ app.get("/products", (request, response) => {
   // response.status(200).send(products);
 }); //router of backend
 
+// app.get("/login", (request, response) => {
+//   console.log("login husel orj irlee");
+//   fs.readFile("./data/users.json", (err, data) => {
+//     if (err) {
+//       response.status(404).send({ message: err });
+//     } else {
+//       response.status(200).send(JSON.parse(data));
+//     }
+//   });
+// });
+
 app.get("/product/:id", async (request, response) => {
   const prodId = request.params.id;
   const products = await readFile("./data/products.json");
@@ -53,9 +64,14 @@ app.post("/product/add", (request, response) => {
 });
 
 app.get("/users", (request, response) => {
-  console.log("get product huslet orj irlee");
-  response.send("one");
-  response.status(200).send("products one");
+  console.log("get huslet orj irlee");
+  fs.readFile("./data/users.json", (err, data) => {
+    if (err) {
+      response.status(404).send({ message: err });
+    } else {
+      response.status(200).send(JSON.parse(data));
+    }
+  });
 });
 
 app.delete("/products/delete/:id", (req, response) => {
